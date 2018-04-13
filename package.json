@@ -1,0 +1,13 @@
+{
+  "name": "room_reservation_meteor",
+  "private": true,
+  "scripts": {
+    "start": "meteor run"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.0.0-beta.42",
+    "bcrypt": "^1.0.3",
+    "fullcalendar": "^3.9.0",
+    "meteor-node-stubs": "^0.3.2"
+  }
+}

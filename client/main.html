@@ -1,0 +1,94 @@
+<head>
+  <title>room_reservation_meteor</title>
+</head>
+
+<body>
+	<div class="content">
+  <h1 class="header">CS403 Room Reservation System</h1>
+  <p>Logged is as: {{> loginButtons}} </p>
+  
+  {{> upcomingReservations}}
+  {{> makeReservationBox }}
+</div>
+</body>
+
+<template name="upcomingReservations">
+    <h1 class="header"> Room 101 </h1>
+    <table>
+    <tr>
+      <th>Start Time </th>
+      <th>End Time </th>
+      <th>Name </th>
+      <th>Event Description </th>
+    </tr>
+        {{#each reservations}}
+            {{> eventLine}}
+        {{/each}}
+    </table>
+    <br>
+</template>
+
+<template name="eventLine">
+  <tr>
+    <td> {{reservationStart}} </td>
+    <td> {{reservationEnd}} </td>
+    <td> {{username}} </td>
+    <td> {{eventDescription}} </td>
+  </tr>
+</template>
+
+<template name="makeReservationBox">
+    {{#if currentUser}} <!-- Only display reservations if logged in -->
+	<hr/>
+	<h2>Make a reservation:</h2>
+	  <form class="reservation">
+		Event Description: <input type="text" name="eventDescription" id="eventDescription"><br>
+		{{> startEndSelectors }}
+		<button type="button" id="submitReservationButton"> Submit </button>
+	  </form>
+	  <h2 class="eventFeedback">{{ eventFeedbackMsg }}</h2>
+    {{/if}}
+</template>
+
+<template name="startEndSelectors">
+  Event Start: 
+  <select id="startMonthDropdown">
+    <option disabled="disabled" selected="selected">Select Month</option> 
+    {{#each months}}
+        <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <select id="startDayDropdown">
+    <option disabled="disabled" selected="selected">Select Day</option> 
+    {{#each days}}
+        <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <select id="startTimeDropdown">
+    <option disabled="disabled" selected="selected">Select Start Time</option> 
+    {{#each times}}
+        <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <br>
+  Event End: 
+  <select id="endMonthDropdown">
+    <option disabled="disabled" selected="selected">Select Month</option> 
+    {{#each months}}
+        <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <select id="endDayDropdown">
+    <option disabled="disabled" selected="selected">Select Day</option> 
+    {{#each days}}
+        <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <select id="endTimeDropdown">
+    <option disabled="disabled" selected="selected">Select End Time</option> 
+    {{#each times}}
+        <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <br>
+</template>
