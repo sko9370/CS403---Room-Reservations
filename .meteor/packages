@@ -24,3 +24,4 @@ jquery
 momentjs:moment
 accounts-base
 check
+iron:router

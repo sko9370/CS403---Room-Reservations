@@ -187,12 +187,12 @@ Template.makeReservationBox.events({
 
          }
       }
-   }      
+   }
 });
+
 
 // Locates and returns the next five events which are occurring.
 Template.upcomingReservations.helpers({
- 
     reservations : function() {
         // TODO: Show events only for the selected room, not events for all rooms.
         var res = Reservations.find({}, { sort: { reservationStart: 1 }}).fetch();
@@ -204,6 +204,20 @@ Template.upcomingReservations.helpers({
             return res;
         }
     }
+});
+
+Template.reservationPage.events({
+   "click #backButton" : function() {
+       console.log("back button clicked");
+       Router.go("/")
+    }       
+});
+
+Template.roomSelectPage.events({
+  'click #room101': function() {
+    console.log("101 clicked!");
+    Router.go("/reservationPage")
+  }
 });
 
 

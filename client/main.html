@@ -3,17 +3,32 @@
 </head>
 
 <body>
-	<div class="content">
-  <h1 class="header">CS403 Room Reservation System</h1>
-  <p>Logged is as: {{> loginButtons}} </p>
-  
-  {{> upcomingReservations}}
-  {{> makeReservationBox }}
-</div>
+
 </body>
+
+<template name="roomSelectPage">
+  <div class="content">
+    <h1 class="header">CS403 Room Reservation System</h1>
+    <p>Logged is as: {{> loginButtons}} </p>
+    {{#if currentUser}} <!-- Only display reservations if logged in -->
+      <button id="room101">Room 101</button>
+    {{else}}
+      <h2 class="eventFeedback">Log in to view the rooms</h2>
+    {{/if}}
+  </div>
+</template>
+
+<template name="reservationPage">
+  <div class="content">
+    {{> upcomingReservations}}
+    {{> makeReservationBox }}
+    <button id="backButton">Go back to room select</button>
+  </div>
+</template>
 
 <template name="upcomingReservations">
     <h1 class="header"> Room 101 </h1>
+    <p>Logged is as: {{> loginButtons}} </p>
     <table>
     <tr>
       <th>Start Time </th>
