@@ -54,12 +54,7 @@ function getDaysForMonth(month) {
   return days;
 }
 
-var roomNum = "100"
-
-function setRoomNum(numString) {
-  roomNum = numString
-  return
-}
+var currRoomNum = "100"
 
 // Used for populating the both month selection fields.
 Template.startEndSelectors.helpers({
@@ -217,7 +212,7 @@ Template.makeReservationBox.events({
 Template.upcomingReservations.helpers({
   reservations : function() {
     // TODO: Show events only for the selected room, not events for all rooms.
-    var res = Reservations.find({"room": "101"}, { sort: { reservationStart: 1 }}).fetch();
+    var res = Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).fetch();
 
     if (res.length > 5) {
         return res.slice(0,5);
@@ -226,8 +221,9 @@ Template.upcomingReservations.helpers({
         return res;
     }
   },
+  // apparently this is super necessary here because these must be functions, not variables
   roomNum : function() {
-    return roomNum
+    return currRoomNum
   }
 });
 
@@ -241,42 +237,42 @@ Template.reservationPage.events({
 Template.roomSelectPage.events({
   'click #room101': function() {
     console.log("101 clicked!");
-    setRoomNum("101");
+    currRoomNum = "101";
     Router.go("/reservationPage");
   },
   'click #room102': function() {
     console.log("102 clicked!");
-    setRoomNum("102");
+    currRoomNum = "102";
     Router.go("/reservationPage")
   },
   'click #room103': function() {
     console.log("103 clicked!");
-    setRoomNum("103");
+    currRoomNum = "103";
     Router.go("/reservationPage")
   },
   'click #room104': function() {
     console.log("104 clicked!");
-    setRoomNum("104");
+    currRoomNum = "104";
     Router.go("/reservationPage")
   },
   'click #room105': function() {
     console.log("105 clicked!");
-    setRoomNum("105");
+    currRoomNum = "105";
     Router.go("/reservationPage")
   },
   'click #room106': function() {
     console.log("106 clicked!");
-    setRoomNum("106");
+    currRoomNum = "106";
     Router.go("/reservationPage")
   },
   'click #room107': function() {
     console.log("107 clicked!");
-    setRoomNum("107");
+    currRoomNum = "107";
     Router.go("/reservationPage")
   },
   'click #room108': function() {
     console.log("108 clicked!");
-    setRoomNum("108");
+    currRoomNum = "108";
     Router.go("/reservationPage")
   }
 });
