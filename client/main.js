@@ -9,19 +9,17 @@ import {Reservations} from "../imports/api/reservations.js";
 // Some helper functions created to make life easier later on.
 // Checks if an object is empty.  Returns true if the object is empty, false otherwise.
 function isEmpty(obj) {
-    for(var key in obj) {
-        if(obj.hasOwnProperty(key))
-            return false;
-    }
-    return true;
+  for(var key in obj) {
+    if(obj.hasOwnProperty(key))
+        return false;
+  }
+  return true;
 }
 
 // Left-Zero pads a number to a given width.  Returns a string
-function zeroFill( number, width )
-{
+function zeroFill( number, width ) {
   width -= number.toString().length;
-  if ( width > 0 )
-  {
+  if ( width > 0 ) {
     return new Array( width + (/\./.test( number ) ? 2 : 1) ).join( '0' ) + number;
   }
   return number + ""; // always return a string
@@ -81,47 +79,47 @@ Template.startEndSelectors.helpers({
 
 // Detects when the month has changed and populates the correct number of days for that month into the dayDropdown select box.
 Template.startEndSelectors.events({
-    // When they select a month, populate the correct number of days in in the dayDropdown select.
-    "change #startMonthDropdown": function (event, template) {
-      var days = getDaysForMonth($(event.currentTarget).val())
+  // When they select a month, populate the correct number of days in in the dayDropdown select.
+  "change #startMonthDropdown": function (event, template) {
+    var days = getDaysForMonth($(event.currentTarget).val())
 
-      // clear the dayDropdown select options
-      $('#startDayDropdown')
-        .find('option')
-        .remove()
-        .end()
-        .append('<option>Select Day</option>');
+    // clear the dayDropdown select options
+    $('#startDayDropdown')
+      .find('option')
+      .remove()
+      .end()
+      .append('<option>Select Day</option>');
 
-      // repopulate with correct number of days
-      if (!isEmpty(days)) {
-        $.each(days, function(key, value) {
-          $('#startDayDropdown').append($("<option/>", {
-            value: key+1,
-            text: value
-          }));
-        });
-      }
-    },
-    "change #endMonthDropdown": function (event, template) {
-      var days = getDaysForMonth($(event.currentTarget).val())
-
-      // clear the dayDropdown select options
-      $('#endDayDropdown')
-        .find('option')
-        .remove()
-        .end()
-        .append('<option>Select Day</option>');
-
-      // repopulate with correct number of days
-      if (!isEmpty(days)) {
-        $.each(days, function(key, value) {
-          $('#endDayDropdown').append($("<option/>", {
-            value: key+1,
-            text: value
-          }));
-        });
-      }
+    // repopulate with correct number of days
+    if (!isEmpty(days)) {
+      $.each(days, function(key, value) {
+        $('#startDayDropdown').append($("<option/>", {
+          value: key+1,
+          text: value
+        }));
+      });
     }
+  },
+  "change #endMonthDropdown": function (event, template) {
+    var days = getDaysForMonth($(event.currentTarget).val())
+
+    // clear the dayDropdown select options
+    $('#endDayDropdown')
+      .find('option')
+      .remove()
+      .end()
+      .append('<option>Select Day</option>');
+
+    // repopulate with correct number of days
+    if (!isEmpty(days)) {
+      $.each(days, function(key, value) {
+        $('#endDayDropdown').append($("<option/>", {
+          value: key+1,
+          text: value
+        }));
+      });
+    }
+  }
 });
 
 // Sets the feedback message initially to be "all fields must be completed."
@@ -140,87 +138,96 @@ Template.makeReservationBox.helpers({
 
 // Logic for the form.  Ensures all fields have been filled out.  Ensures the start date is before the end date.
 Template.makeReservationBox.events({
-   "click #submitReservationButton" : function(event, template) {
-      var eventDescription = $("#eventDescription").val()
+  "click #submitReservationButton" : function(event, template) {
+    var eventDescription = $("#eventDescription").val()
 
-      var startMonth = $('#startMonthDropdown').val();
-      var startDay = parseInt($('#startDayDropdown').val());
-      var startTime = $('#startTimeDropdown').val();
+    var startMonth = $('#startMonthDropdown').val();
+    var startDay = parseInt($('#startDayDropdown').val());
+    var startTime = $('#startTimeDropdown').val();
 
-      var endMonth = $('#endMonthDropdown').val();
-      var endDay = parseInt($('#endDayDropdown').val());
-      var endTime = $('#endTimeDropdown').val();
+    var endMonth = $('#endMonthDropdown').val();
+    var endDay = parseInt($('#endDayDropdown').val());
+    var endTime = $('#endTimeDropdown').val();
 
-      var roomNumber = $('#roomNumberDropdown').val()
+    var roomNumber = $('#roomNumberDropdown').val()
 
-      // Validate they have filled out all the boxes
-      if (eventDescription == "") {
-    		 template.eventFeedbackMsg.set("You must enter an: Event Description");
-    		 template.find('.eventFeedback').style.color="#ff4444";
-         return
+    // Validate they have filled out all the boxes
+    if (eventDescription == "") {
+  		 template.eventFeedbackMsg.set("You must enter an: Event Description");
+  		 template.find('.eventFeedback').style.color="#ff4444";
+       return
+    }
+
+    else if(startMonth==null || startDay==null || startTime == null || isNaN(startDay) ) {
+  		 template.eventFeedbackMsg.set("You must enter a complete Event Start date");
+  		 template.find('.eventFeedback').style.color="#ff4444";
+       return
+    }
+    else if(endMonth==null || endDay==null || endTime == null || isNaN(endDay)) {
+  		 template.eventFeedbackMsg.set("You must enter a complete Event End date");
+  		 template.find('.eventFeedback').style.color="#ff4444";
+       return
+    }
+
+    else if(roomNumber==null) {
+      template.eventFeedbackMsg.set("You must enter a room number");
+      template.find('.eventFeedback').style.color="#ff4444";
+      return
+    }
+
+    //They have, so validate startTime is before endTime
+    else {
+      var startTimeString = startMonth.toString() + " " + startDay.toString() + ", 2018 " + startTime.toString().substring(0,2) + ":" + startTime.toString().substring(2,4) + ":00";
+      var reservationStart = new Date(startTimeString);
+
+      var endTimeString = endMonth.toString() + " " + endDay.toString() + ", 2018 " + endTime.toString().substring(0,2) + ":" + endTime.toString().substring(2,4) + ":00";
+      var reservationEnd = new Date(endTimeString);
+
+      var roomNum = roomNumber.toString()
+
+      if (reservationStart >= reservationEnd) {
+	      template.eventFeedbackMsg.set("End date must be after start date");
+	      template.find('.eventFeedback').style.color="#ff4444";
       }
-
-      else if(startMonth==null || startDay==null || startTime == null || isNaN(startDay) ) {
-    		 template.eventFeedbackMsg.set("You must enter a complete Event Start date");
-    		 template.find('.eventFeedback').style.color="#ff4444";
-         return
+      else if (template.checkIfInUse){
+	      template.eventFeedbackMsg.set("Room is in use at this time");
+	      template.find('.eventFeedback').style.color="#ff4444";
       }
-      else if(endMonth==null || endDay==null || endTime == null || isNaN(endDay)) {
-    		 template.eventFeedbackMsg.set("You must enter a complete Event End date");
-    		 template.find('.eventFeedback').style.color="#ff4444";
-         return
-      }
-
-      else if(roomNumber==null) {
-        template.eventFeedbackMsg.set("You must enter a room number");
-        template.find('.eventFeedback').style.color="#ff4444";
-        return
-      }
-
-      //They have, so validate startTime is before endTime
       else {
-        var startTimeString = startMonth.toString() + " " + startDay.toString() + ", 2018 " + startTime.toString().substring(0,2) + ":" + startTime.toString().substring(2,4) + ":00";
-        var reservationStart = new Date(startTimeString);
-
-        var endTimeString = endMonth.toString() + " " + endDay.toString() + ", 2018 " + endTime.toString().substring(0,2) + ":" + endTime.toString().substring(2,4) + ":00";
-        var reservationEnd = new Date(endTimeString);
-
-        var roomNum = roomNumber.toString()
-
-        if (reservationStart >= reservationEnd) {
-		      template.eventFeedbackMsg.set("End date must be after start date");
-		      template.find('.eventFeedback').style.color="#ff4444";
-        }
-        else if (template.checkIfInUse){
-		      template.eventFeedbackMsg.set("Room is in use at this time");
-		      template.find('.eventFeedback').style.color="#ff4444";
-        }
-        else {
-          // TODO: Confirm new event is not overlapping with any existing events.
-          // TODO: Confirm existing events do not overlap with new events.
-          // TODO: support 8 total rooms, instead of hard coding room 101 into the database.
-          Meteor.call("insertEvent", eventDescription, reservationStart, reservationEnd, roomNum);
-  		    template.eventFeedbackMsg.set("Event entered successfully");
-  		    template.find('.eventFeedback').style.color="#44ff22";
-        }
+        // TODO: Confirm new event is not overlapping with any existing events.
+        // TODO: Confirm existing events do not overlap with new events.
+        // TODO: support 8 total rooms, instead of hard coding room 101 into the database.
+        Meteor.call("insertEvent", eventDescription, reservationStart, reservationEnd, roomNum);
+		    template.eventFeedbackMsg.set("Event entered successfully");
+		    template.find('.eventFeedback').style.color="#44ff22";
       }
-   }
+    }
+  }
 });
 
 
 // Locates and returns the next five events which are occurring.
 Template.upcomingReservations.helpers({
-    reservations : function() {
-        // TODO: Show events only for the selected room, not events for all rooms.
-        var res = Reservations.find({"room": "101"}, { sort: { reservationStart: 1 }}).fetch();
+  reservations : function() {
+    // TODO: Show events only for the selected room, not events for all rooms.
+    var res = Reservations.find({"room": "101"}, { sort: { reservationStart: 1 }}).fetch();
 
-        if (res.length > 5) {
-            return res.slice(0,5);
-        }
-        else {
-            return res;
-        }
+    if (res.length > 5) {
+        return res.slice(0,5);
     }
+    else {
+        return res;
+    }
+  },
+////////////////////////////////////////////////////////////////
+  setCurrentRoom : function(currentRoomNumber) {
+    var currRoom = currentRoomNumber
+  },
+
+  currentRoom : function() {
+    return currRoom
+  }
+////////////////////////////////////////////////////////////////
 });
 
 Template.reservationPage.events({
@@ -228,4 +235,40 @@ Template.reservationPage.events({
        console.log("back button clicked");
        Router.go("/")
     }
+});
+
+Template.roomSelectPage.events({
+  'click #room101': function() {
+    console.log("101 clicked!");
+    Router.go("/reservationPage")
+  },
+  'click #room102': function() {
+    console.log("102 clicked!");
+    setCurrentRoom("102")
+    Router.go("/reservationPage")
+  },
+  'click #room103': function() {
+    console.log("103 clicked!");
+    Router.go("/reservationPage")
+  },
+  'click #room104': function() {
+    console.log("104 clicked!");
+    Router.go("/reservationPage")
+  },
+  'click #room105': function() {
+    console.log("105 clicked!");
+    Router.go("/reservationPage")
+  },
+  'click #room106': function() {
+    console.log("106 clicked!");
+    Router.go("/reservationPage")
+  },
+  'click #room107': function() {
+    console.log("107 clicked!");
+    Router.go("/reservationPage")
+  },
+  'click #room108': function() {
+    console.log("108 clicked!");
+    Router.go("/reservationPage")
+  }
 });

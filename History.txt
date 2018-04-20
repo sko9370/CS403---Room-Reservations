@@ -10,7 +10,12 @@
   must show only one room's reservations (todo)
     done in main.js
       upcomingReservations.helpers with mongo query
-  (cancel) reroute room number buttons to own respective pages
+  (canceled) reroute room number buttons to own respective pages
+
+
   find way to change reservation page heading to match which button was pressed
     ?? use jquery? somehow?
+      leave upcoming Reservations heading blank, add a data field, and use jquery
+        to (erase and) append correct room number to heading when button pressed
+    add input parameter to reservations function
   also link button pressed id with which reservations are shown, currently hardcoded 101
