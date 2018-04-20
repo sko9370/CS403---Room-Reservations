@@ -54,6 +54,13 @@ function getDaysForMonth(month) {
   return days;
 }
 
+var roomNum = "100"
+
+function setRoomNum(numString) {
+  roomNum = numString
+  return
+}
+
 // Used for populating the both month selection fields.
 Template.startEndSelectors.helpers({
   months: function(){
@@ -123,7 +130,7 @@ Template.startEndSelectors.events({
 });
 
 // Sets the feedback message initially to be "all fields must be completed."
-Template.makeReservationBox.onCreated(function(){
+Template.makeReservationBox.onCreated(function() {
 	this.eventFeedbackMsg = new ReactiveVar("All fields must be complete");
 });
 
@@ -153,20 +160,20 @@ Template.makeReservationBox.events({
 
     // Validate they have filled out all the boxes
     if (eventDescription == "") {
-  		 template.eventFeedbackMsg.set("You must enter an: Event Description");
-  		 template.find('.eventFeedback').style.color="#ff4444";
-       return
+  		template.eventFeedbackMsg.set("You must enter an: Event Description");
+  		template.find('.eventFeedback').style.color="#ff4444";
+      return
     }
 
     else if(startMonth==null || startDay==null || startTime == null || isNaN(startDay) ) {
-  		 template.eventFeedbackMsg.set("You must enter a complete Event Start date");
-  		 template.find('.eventFeedback').style.color="#ff4444";
-       return
+  		template.eventFeedbackMsg.set("You must enter a complete Event Start date");
+  		template.find('.eventFeedback').style.color="#ff4444";
+      return
     }
     else if(endMonth==null || endDay==null || endTime == null || isNaN(endDay)) {
-  		 template.eventFeedbackMsg.set("You must enter a complete Event End date");
-  		 template.find('.eventFeedback').style.color="#ff4444";
-       return
+  		template.eventFeedbackMsg.set("You must enter a complete Event End date");
+  		template.find('.eventFeedback').style.color="#ff4444";
+      return
     }
 
     else if(roomNumber==null) {
@@ -219,56 +226,57 @@ Template.upcomingReservations.helpers({
         return res;
     }
   },
-////////////////////////////////////////////////////////////////
-  setCurrentRoom : function(currentRoomNumber) {
-    var currRoom = currentRoomNumber
-  },
-
-  currentRoom : function() {
-    return currRoom
+  roomNum : function() {
+    return roomNum
   }
-////////////////////////////////////////////////////////////////
 });
 
 Template.reservationPage.events({
-   "click #backButton" : function() {
-       console.log("back button clicked");
-       Router.go("/")
-    }
+  "click #backButton" : function() {
+    console.log("back button clicked");
+    Router.go("/")
+  }
 });
 
 Template.roomSelectPage.events({
   'click #room101': function() {
     console.log("101 clicked!");
-    Router.go("/reservationPage")
+    setRoomNum("101");
+    Router.go("/reservationPage");
   },
   'click #room102': function() {
     console.log("102 clicked!");
-    setCurrentRoom("102")
+    setRoomNum("102");
     Router.go("/reservationPage")
   },
   'click #room103': function() {
     console.log("103 clicked!");
+    setRoomNum("103");
     Router.go("/reservationPage")
   },
   'click #room104': function() {
     console.log("104 clicked!");
+    setRoomNum("104");
     Router.go("/reservationPage")
   },
   'click #room105': function() {
     console.log("105 clicked!");
+    setRoomNum("105");
     Router.go("/reservationPage")
   },
   'click #room106': function() {
     console.log("106 clicked!");
+    setRoomNum("106");
     Router.go("/reservationPage")
   },
   'click #room107': function() {
     console.log("107 clicked!");
+    setRoomNum("107");
     Router.go("/reservationPage")
   },
   'click #room108': function() {
     console.log("108 clicked!");
+    setRoomNum("108");
     Router.go("/reservationPage")
   }
 });
