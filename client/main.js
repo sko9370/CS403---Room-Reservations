@@ -151,8 +151,6 @@ Template.makeReservationBox.events({
     var endDay = parseInt($('#endDayDropdown').val());
     var endTime = $('#endTimeDropdown').val();
 
-    var roomNumber = $('#roomNumberDropdown').val()
-
     // Validate they have filled out all the boxes
     if (eventDescription == "") {
   		template.eventFeedbackMsg.set("You must enter an: Event Description");
@@ -171,12 +169,6 @@ Template.makeReservationBox.events({
       return
     }
 
-    else if(roomNumber==null) {
-      template.eventFeedbackMsg.set("You must enter a room number");
-      template.find('.eventFeedback').style.color="#ff4444";
-      return
-    }
-
     //They have, so validate startTime is before endTime
     else {
       var startTimeString = startMonth.toString() + " " + startDay.toString() + ", 2018 " + startTime.toString().substring(0,2) + ":" + startTime.toString().substring(2,4) + ":00";
@@ -184,8 +176,6 @@ Template.makeReservationBox.events({
 
       var endTimeString = endMonth.toString() + " " + endDay.toString() + ", 2018 " + endTime.toString().substring(0,2) + ":" + endTime.toString().substring(2,4) + ":00";
       var reservationEnd = new Date(endTimeString);
-
-      var roomNum = roomNumber.toString()
 
       if (reservationStart >= reservationEnd) {
 	      template.eventFeedbackMsg.set("End date must be after start date");
@@ -196,12 +186,30 @@ Template.makeReservationBox.events({
 	      template.find('.eventFeedback').style.color="#ff4444";
       }
       else {
+        /////////////////////////////////////////////////////////////////////////////////////////
         // TODO: Confirm new event is not overlapping with any existing events.
-        // TODO: Confirm existing events do not overlap with new events.
-        // TODO: support 8 total rooms, instead of hard coding room 101 into the database.
-        Meteor.call("insertEvent", eventDescription, reservationStart, reservationEnd, roomNum);
-		    template.eventFeedbackMsg.set("Event entered successfully");
-		    template.find('.eventFeedback').style.color="#44ff22";
+        var overlap = false
+        var res = Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).fetch()
+        for (existingEvent in res) {
+          var existStart = existingEvent._reservationStart
+          var existEnd = existingEvent._reservationEnd
+          if ((+existStart < +reservationStart && +existEnd > +reservationStart) ||
+            (+existStart < +reservationEnd && +existEnd > +reservationEnd)) {
+              overlap = true;
+              break;
+            }
+        }
+        if (overlap) {
+          template.eventFeedbackMsg.set("Event overlaps");
+  		    template.find('.eventFeedback').style.color="#ff4444";
+        }
+        else {
+          // TODO: support 8 total rooms, instead of hard coding room 101 into the database.
+          Meteor.call("insertEvent", eventDescription, reservationStart, reservationEnd, currRoomNum);
+  		    template.eventFeedbackMsg.set("Event entered successfully");
+  		    template.find('.eventFeedback').style.color="#44ff22";
+        }
+        /////////////////////////////////////////////////////////////////////////////////////////////
       }
     }
   }
@@ -215,10 +223,10 @@ Template.upcomingReservations.helpers({
     var res = Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).fetch();
 
     if (res.length > 5) {
-        return res.slice(0,5);
+      return res.slice(0,5);
     }
     else {
-        return res;
+      return res;
     }
   },
   // apparently this is super necessary here because these must be functions, not variables

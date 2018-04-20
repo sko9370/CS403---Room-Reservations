@@ -11,10 +11,10 @@
     done in main.js
       upcomingReservations.helpers with mongo query
   (canceled) reroute room number buttons to own respective pages
-
-
   find way to change reservation page heading to match which button was pressed
     done with global JS function and variable
 
     USE AN OUTSIDE FUNCTION AND RUN INSIDE THE CORRECT TEMPLATE HELPER
+
+
   also link button pressed id with which reservations are shown, currently hardcoded 101
