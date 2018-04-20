@@ -12,6 +12,13 @@
     <p>Logged is as: {{> loginButtons}} </p>
     {{#if currentUser}} <!-- Only display reservations if logged in -->
       <button id="room101">Room 101</button>
+      <button id="room102">Room 102</button>
+      <button id="room103">Room 103</button>
+      <button id="room104">Room 104</button>
+      <button id="room105">Room 105</button>
+      <button id="room106">Room 106</button>
+      <button id="room107">Room 107</button>
+      <button id="room108">Room 108</button>
     {{else}}
       <h2 class="eventFeedback">Log in to view the rooms</h2>
     {{/if}}
@@ -27,20 +34,20 @@
 </template>
 
 <template name="upcomingReservations">
-    <h1 class="header"> Room 101 </h1>
-    <p>Logged is as: {{> loginButtons}} </p>
-    <table>
+  <h1 class="header"> Room 101 </h1>
+  <p>Logged is as: {{> loginButtons}} </p>
+  <table>
     <tr>
       <th>Start Time </th>
       <th>End Time </th>
       <th>Name </th>
       <th>Event Description </th>
     </tr>
-        {{#each reservations}}
-            {{> eventLine}}
-        {{/each}}
-    </table>
-    <br>
+    {{#each reservations}}
+        {{> eventLine}}
+    {{/each}}
+  </table>
+  <br>
 </template>
 
 <template name="eventLine">
@@ -66,42 +73,50 @@
 </template>
 
 <template name="startEndSelectors">
-  Event Start: 
+  Event Start:
   <select id="startMonthDropdown">
-    <option disabled="disabled" selected="selected">Select Month</option> 
+    <option disabled="disabled" selected="selected">Select Month</option>
     {{#each months}}
         <option value="{{this}}">{{this}}</option>
     {{/each}}
   </select>
   <select id="startDayDropdown">
-    <option disabled="disabled" selected="selected">Select Day</option> 
+    <option disabled="disabled" selected="selected">Select Day</option>
     {{#each days}}
         <option value="{{this}}">{{this}}</option>
     {{/each}}
   </select>
   <select id="startTimeDropdown">
-    <option disabled="disabled" selected="selected">Select Start Time</option> 
+    <option disabled="disabled" selected="selected">Select Start Time</option>
     {{#each times}}
         <option value="{{this}}">{{this}}</option>
     {{/each}}
   </select>
   <br>
-  Event End: 
+  Event End:
   <select id="endMonthDropdown">
-    <option disabled="disabled" selected="selected">Select Month</option> 
+    <option disabled="disabled" selected="selected">Select Month</option>
     {{#each months}}
         <option value="{{this}}">{{this}}</option>
     {{/each}}
   </select>
   <select id="endDayDropdown">
-    <option disabled="disabled" selected="selected">Select Day</option> 
+    <option disabled="disabled" selected="selected">Select Day</option>
     {{#each days}}
         <option value="{{this}}">{{this}}</option>
     {{/each}}
   </select>
   <select id="endTimeDropdown">
-    <option disabled="disabled" selected="selected">Select End Time</option> 
+    <option disabled="disabled" selected="selected">Select Room</option>
     {{#each times}}
+        <option value="{{this}}">{{this}}</option>
+    {{/each}}
+  </select>
+  <br>
+  Room Number:
+  <select id="roomNumberDropdown">
+    <option disabled="disabled" selected="selected">Select Room</option>
+    {{#each rooms}}
         <option value="{{this}}">{{this}}</option>
     {{/each}}
   </select>

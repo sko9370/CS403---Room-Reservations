@@ -1,0 +1,7 @@
+meteor npm install
+
+meteor run --port 3100
+
+meteor mongo
+  db.users.find()
+  show collections

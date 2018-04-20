@@ -30,7 +30,7 @@ function zeroFill( number, width )
 // Returns an array containing the numbers of days in a given month.
 function getDaysForMonth(month) {
   var days = [];
-  
+
   if (month == "January" || month == "March" || month == "May" || month == "July" || month == "August" || month == "October" || month == "December") {
     days = [];
     for (i=1; i<=31; i++) {
@@ -52,14 +52,14 @@ function getDaysForMonth(month) {
   else {
     days = [];
   }
-  
+
   return days;
 }
 
 // Used for populating the both month selection fields.
 Template.startEndSelectors.helpers({
   months: function(){
-      return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    return ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
   },
   times: function(){
     var times = []
@@ -69,6 +69,13 @@ Template.startEndSelectors.helpers({
       }
     }
     return times
+  },
+  rooms: function(){
+    var rooms = []
+    for (room=101; room<=108; room++) {
+      rooms.push(room);
+    }
+    return rooms
   }
 });
 
@@ -84,7 +91,7 @@ Template.startEndSelectors.events({
         .remove()
         .end()
         .append('<option>Select Day</option>');
-        
+
       // repopulate with correct number of days
       if (!isEmpty(days)) {
         $.each(days, function(key, value) {
@@ -104,7 +111,7 @@ Template.startEndSelectors.events({
         .remove()
         .end()
         .append('<option>Select Day</option>');
-        
+
       // repopulate with correct number of days
       if (!isEmpty(days)) {
         $.each(days, function(key, value) {
@@ -125,7 +132,7 @@ Template.makeReservationBox.onCreated(function(){
 // updates the event feedback message if need be.
 Template.makeReservationBox.helpers({
   eventFeedbackMsg: function() {
-	return Template.instance().eventFeedbackMsg.get();  },	
+	return Template.instance().eventFeedbackMsg.get();  },
   checkIfInUse: function() {
 	return false;
   }
@@ -133,59 +140,69 @@ Template.makeReservationBox.helpers({
 
 // Logic for the form.  Ensures all fields have been filled out.  Ensures the start date is before the end date.
 Template.makeReservationBox.events({
-   "click #submitReservationButton" : function(event, template) {       
-       var eventDescription = $("#eventDescription").val()
+   "click #submitReservationButton" : function(event, template) {
+      var eventDescription = $("#eventDescription").val()
 
-       var startMonth = $('#startMonthDropdown').val();
-       var startDay = parseInt($('#startDayDropdown').val());
-       var startTime = $('#startTimeDropdown').val();
-       
-       var endMonth = $('#endMonthDropdown').val();
-       var endDay = parseInt($('#endDayDropdown').val());
-       var endTime = $('#endTimeDropdown').val();
-       
+      var startMonth = $('#startMonthDropdown').val();
+      var startDay = parseInt($('#startDayDropdown').val());
+      var startTime = $('#startTimeDropdown').val();
+
+      var endMonth = $('#endMonthDropdown').val();
+      var endDay = parseInt($('#endDayDropdown').val());
+      var endTime = $('#endTimeDropdown').val();
+
+      var roomNumber = $('#roomNumberDropdown').val()
+
       // Validate they have filled out all the boxes
       if (eventDescription == "") {
-		 template.eventFeedbackMsg.set("You must enter an: Event Description");
-		 template.find('.eventFeedback').style.color="#ff4444";
+    		 template.eventFeedbackMsg.set("You must enter an: Event Description");
+    		 template.find('.eventFeedback').style.color="#ff4444";
          return
       }
-       
+
       else if(startMonth==null || startDay==null || startTime == null || isNaN(startDay) ) {
-		 template.eventFeedbackMsg.set("You must enter a complete Event Start date");
-		 template.find('.eventFeedback').style.color="#ff4444";
+    		 template.eventFeedbackMsg.set("You must enter a complete Event Start date");
+    		 template.find('.eventFeedback').style.color="#ff4444";
          return
       }
       else if(endMonth==null || endDay==null || endTime == null || isNaN(endDay)) {
-		 template.eventFeedbackMsg.set("You must enter a complete Event End date");
-		 template.find('.eventFeedback').style.color="#ff4444";
+    		 template.eventFeedbackMsg.set("You must enter a complete Event End date");
+    		 template.find('.eventFeedback').style.color="#ff4444";
          return
       }
+
+      else if(roomNumber==null) {
+        template.eventFeedbackMsg.set("You must enter a room number");
+        template.find('.eventFeedback').style.color="#ff4444";
+        return
+      }
+
       //They have, so validate startTime is before endTime
       else {
-         var startTimeString = startMonth.toString() + " " + startDay.toString() + ", 2018 " + startTime.toString().substring(0,2) + ":" + startTime.toString().substring(2,4) + ":00";
-         var reservationStart = new Date(startTimeString);
-         
-         var endTimeString = endMonth.toString() + " " + endDay.toString() + ", 2018 " + endTime.toString().substring(0,2) + ":" + endTime.toString().substring(2,4) + ":00";
-         var reservationEnd = new Date(endTimeString);
-         
-         if (reservationStart >= reservationEnd) {
-		   template.eventFeedbackMsg.set("End date must be after start date");
-		 template.find('.eventFeedback').style.color="#ff4444";
-         }
-         else if (template.checkIfInUse){
-		   template.eventFeedbackMsg.set("Room is in use at this time");
-		 template.find('.eventFeedback').style.color="#ff4444";
-         }
-         else {
-           // TODO: Confirm new event is not overlapping with any existing events.
-           // TODO: Confirm existing events do not overlap with new events.
-           // TODO: support 8 total rooms, instead of hard coding room 101 into the database. 
-           Meteor.call("insertEvent", eventDescription, reservationStart, reservationEnd, 101);
-		   template.eventFeedbackMsg.set("Event entered successfully");
-		 template.find('.eventFeedback').style.color="#44ff22";
+        var startTimeString = startMonth.toString() + " " + startDay.toString() + ", 2018 " + startTime.toString().substring(0,2) + ":" + startTime.toString().substring(2,4) + ":00";
+        var reservationStart = new Date(startTimeString);
 
-         }
+        var endTimeString = endMonth.toString() + " " + endDay.toString() + ", 2018 " + endTime.toString().substring(0,2) + ":" + endTime.toString().substring(2,4) + ":00";
+        var reservationEnd = new Date(endTimeString);
+
+        var roomNum = roomNumber.toString()
+
+        if (reservationStart >= reservationEnd) {
+		      template.eventFeedbackMsg.set("End date must be after start date");
+		      template.find('.eventFeedback').style.color="#ff4444";
+        }
+        else if (template.checkIfInUse){
+		      template.eventFeedbackMsg.set("Room is in use at this time");
+		      template.find('.eventFeedback').style.color="#ff4444";
+        }
+        else {
+          // TODO: Confirm new event is not overlapping with any existing events.
+          // TODO: Confirm existing events do not overlap with new events.
+          // TODO: support 8 total rooms, instead of hard coding room 101 into the database.
+          Meteor.call("insertEvent", eventDescription, reservationStart, reservationEnd, roomNum);
+  		    template.eventFeedbackMsg.set("Event entered successfully");
+  		    template.find('.eventFeedback').style.color="#44ff22";
+        }
       }
    }
 });
@@ -195,7 +212,7 @@ Template.makeReservationBox.events({
 Template.upcomingReservations.helpers({
     reservations : function() {
         // TODO: Show events only for the selected room, not events for all rooms.
-        var res = Reservations.find({}, { sort: { reservationStart: 1 }}).fetch();
+        var res = Reservations.find({"room": "101"}, { sort: { reservationStart: 1 }}).fetch();
 
         if (res.length > 5) {
             return res.slice(0,5);
@@ -210,15 +227,5 @@ Template.reservationPage.events({
    "click #backButton" : function() {
        console.log("back button clicked");
        Router.go("/")
-    }       
+    }
 });
-
-Template.roomSelectPage.events({
-  'click #room101': function() {
-    console.log("101 clicked!");
-    Router.go("/reservationPage")
-  }
-});
-
-
-

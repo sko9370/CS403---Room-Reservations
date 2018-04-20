@@ -9,5 +9,3 @@ Router.route('/', function () {
 Router.route("/reservationPage", function() {
   this.render("reservationPage");
 });
-
-

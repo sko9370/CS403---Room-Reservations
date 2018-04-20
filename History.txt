@@ -1,0 +1,16 @@
+17 April
+  added buttons for each room
+
+19 April
+  must add in drop down for room number (todo)
+    changed html, add roomNumberDropdown
+    add rooms function in startEndSelectors.helpers
+    add check to see if room dropdown filled out before submitting
+    submit with respective room number, not 101 default
+  must show only one room's reservations (todo)
+    done in main.js
+      upcomingReservations.helpers with mongo query
+  (cancel) reroute room number buttons to own respective pages
+  find way to change reservation page heading to match which button was pressed
+    ?? use jquery? somehow?
+  also link button pressed id with which reservations are shown, currently hardcoded 101
