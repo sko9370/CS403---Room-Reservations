@@ -54,7 +54,7 @@ function getDaysForMonth(month) {
   return days;
 }
 
-var currRoomNum = "100"
+var currRoomNum = "101"
 
 // Used for populating the both month selection fields.
 Template.startEndSelectors.helpers({
@@ -188,26 +188,38 @@ Template.makeReservationBox.events({
       else {
         /////////////////////////////////////////////////////////////////////////////////////////
         // TODO: Confirm new event is not overlapping with any existing events.
-        var overlap = false
-        var res = Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).fetch()
+        var overlap = false;
+        var res = Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).fetch();
+        var existingEvent;
+        /*
         for (existingEvent in res) {
-          var existStart = existingEvent._reservationStart
-          var existEnd = existingEvent._reservationEnd
-          if ((+existStart < +reservationStart && +existEnd > +reservationStart) ||
-            (+existStart < +reservationEnd && +existEnd > +reservationEnd)) {
+          var existStart = existingEvent.reservationStart;
+          var existEnd = existingEvent.reservationEnd;
+          if ((existStart.getTime < reservationStart.getTime && existEnd.getTime > reservationStart.getTime) ||
+            (existStart.getTime < reservationEnd.getTime && existEnd.getTime > reservationEnd.getTime)) {
               overlap = true;
-              break;
             }
         }
+        */
+        Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).forEach(function(obj) {
+          var existStart = obj.reservationStart;
+          var existEnd = obj.reservationEnd;
+          if ((existStart < reservationStart && existEnd > reservationStart) ||
+            (existStart < reservationEnd && existEnd > reservationEnd)) {
+              overlap = true;
+            }
+        })
         if (overlap) {
           template.eventFeedbackMsg.set("Event overlaps");
   		    template.find('.eventFeedback').style.color="#ff4444";
+          console.log("Event overlaps");
         }
         else {
           // TODO: support 8 total rooms, instead of hard coding room 101 into the database.
           Meteor.call("insertEvent", eventDescription, reservationStart, reservationEnd, currRoomNum);
   		    template.eventFeedbackMsg.set("Event entered successfully");
   		    template.find('.eventFeedback').style.color="#44ff22";
+          console.log("Event entered");
         }
         /////////////////////////////////////////////////////////////////////////////////////////////
       }
