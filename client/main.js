@@ -191,16 +191,14 @@ Template.makeReservationBox.events({
         var overlap = false;
         var res = Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).fetch();
         var existingEvent;
-        /*
-        for (existingEvent in res) {
-          var existStart = existingEvent.reservationStart;
-          var existEnd = existingEvent.reservationEnd;
-          if ((existStart.getTime < reservationStart.getTime && existEnd.getTime > reservationStart.getTime) ||
-            (existStart.getTime < reservationEnd.getTime && existEnd.getTime > reservationEnd.getTime)) {
-              overlap = true;
-            }
-        }
-        */
+
+
+// https://stackoverflow.com/questions/12956438/accessing-mongodb-collection-values-in-javascript
+// 2018 APR 22. Assistance given to the author, stackoverflow post
+// I used the information in the third post down that uses ForEach to iterate through a collection.
+// I was using a for loop to manually iterate through.
+// But it wasn't working because it probably only returned the cursor, not the actual object
+// This allowed me to actually compare the date objects and check for overlapping times. West Point, NY
         Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).forEach(function(obj) {
           var existStart = obj.reservationStart;
           var existEnd = obj.reservationEnd;
@@ -294,5 +292,16 @@ Template.roomSelectPage.events({
     console.log("108 clicked!");
     currRoomNum = "108";
     Router.go("/reservationPage")
+  }
+});
+
+// https://stackoverflow.com/questions/22087907/how-to-format-date-in-meteor-template
+// 2018 APR 22 Assistance given to author. stackoverflow post
+// I used the top answer to use a function to format my string using moment.
+// I also learned how to use functions in the spacebars format.
+// This allowed me to display readable dates/times on my list of reservations.
+Template.eventLine.helpers({
+  dateFormat : function(date) {
+    return moment(date).format('LLL');
   }
 });
