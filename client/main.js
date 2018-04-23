@@ -181,18 +181,14 @@ Template.makeReservationBox.events({
 	      template.eventFeedbackMsg.set("End date must be after start date");
 	      template.find('.eventFeedback').style.color="#ff4444";
       }
+      /*
       else if (template.checkIfInUse){
 	      template.eventFeedbackMsg.set("Room is in use at this time");
 	      template.find('.eventFeedback').style.color="#ff4444";
       }
+      */
       else {
-        /////////////////////////////////////////////////////////////////////////////////////////
-        // TODO: Confirm new event is not overlapping with any existing events.
         var overlap = false;
-        var res = Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).fetch();
-        var existingEvent;
-
-
 // https://stackoverflow.com/questions/12956438/accessing-mongodb-collection-values-in-javascript
 // 2018 APR 22. Assistance given to the author, stackoverflow post
 // I used the information in the third post down that uses ForEach to iterate through a collection.
@@ -202,18 +198,17 @@ Template.makeReservationBox.events({
         Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).forEach(function(obj) {
           var existStart = obj.reservationStart;
           var existEnd = obj.reservationEnd;
-          if ((existStart < reservationStart && existEnd > reservationStart) ||
-            (existStart < reservationEnd && existEnd > reservationEnd)) {
+          if ((existStart <= reservationStart && existEnd >= reservationStart) ||
+            (existStart <= reservationEnd && existEnd >= reservationEnd)) {
               overlap = true;
             }
         })
         if (overlap) {
-          template.eventFeedbackMsg.set("Event overlaps");
+          template.eventFeedbackMsg.set("Room is in use at this time");
   		    template.find('.eventFeedback').style.color="#ff4444";
           console.log("Event overlaps");
         }
         else {
-          // TODO: support 8 total rooms, instead of hard coding room 101 into the database.
           Meteor.call("insertEvent", eventDescription, reservationStart, reservationEnd, currRoomNum);
   		    template.eventFeedbackMsg.set("Event entered successfully");
   		    template.find('.eventFeedback').style.color="#44ff22";
@@ -229,7 +224,6 @@ Template.makeReservationBox.events({
 // Locates and returns the next five events which are occurring.
 Template.upcomingReservations.helpers({
   reservations : function() {
-    // TODO: Show events only for the selected room, not events for all rooms.
     var res = Reservations.find({"room": currRoomNum}, { sort: { reservationStart: 1 }}).fetch();
 
     if (res.length > 5) {
